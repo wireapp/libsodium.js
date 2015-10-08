@@ -43,7 +43,7 @@
 		var to_hex = sodium.to_hex;
 		var from_hex = sodium.from_hex;
 		var is_hex = function(s){
-			return /^([a-f]|[0-9])+$/ig.test(s) && s.length % 2 == 0;
+			return /^[a-fA-F0-9]+$/g.test(s) && s.length % 2 == 0;
 		}
 
 		t.scrypt = function(){
@@ -232,6 +232,36 @@
 		};
 
 		t.hmac = function(){
+			function testHmacVector(auth_func, verify_func, key_bytes, v) {
+				var key, msg;
+
+				if (is_hex(v.k)) {
+					key = from_hex(v.k);
+				} else if (v.k.length < key_bytes) {
+					var newKeyBuffer = new Uint8Array(sodium.crypto_auth_KEYBYTES);
+					var utf8KeyBuffer = sodium.from_string(v.k);
+					for (var i = 0; i < v.k.length; i++) newKeyBuffer[i] = utf8KeyBuffer[i];
+					key = newKeyBuffer;
+				} else {
+					key = v.k;
+				}
+
+				if (is_hex(v.m)) {
+					msg = from_hex(v.m);
+				} else {
+					msg = v.m;
+				}
+
+				var tag = auth_func(msg, key);
+				var tagHex = to_hex(tag);
+
+				if (tagHex != v.h)
+					throw new Error('Unexpected HMAC for vector: ' + JSON.stringify(v));
+
+				if (!verify_func(tag, msg, key))
+					throw new Error('Cannot verify HMAC for vector: ' + JSON.stringify(v));
+			}
+
 			var hmacSHA512256Vectors = [
 				{
 					k: 'Jefe',
@@ -256,82 +286,16 @@
 			];
 
 			for (var i = 0; i < hmacSHA512256Vectors.length; i++)
-				testHmacSHA512256Vector(hmacSHA512256Vectors[i]);
+				testHmacVector(sodium.crypto_auth, sodium.crypto_auth_verify,
+						sodium.crypto_auth_KEYBYTES, hmacSHA512256Vectors[i]);
 
 			for (var i = 0; i < hmacSHA512Vectors.length; i++)
-				testHmacSHA512Vector(hmacSHA512Vectors[i]);
+				testHmacVector(sodium.crypto_auth_hmacsha512, sodium.crypto_auth_hmacsha512_verify,
+						sodium.crypto_auth_hmacsha512_KEYBYTES, hmacSHA512Vectors[i]);
 
 			for (var i = 0; i < hmacSHA256Vectors.length; i++)
-				testHmacSHA256Vector(hmacSHA256Vectors[i]);
-
-			function testHmacSHA512256Vector(v){
-				var key;
-				if (is_hex(v.k)){
-					key = from_hex(v.k);
-				} else {
-					key = expandKey();
-				}
-				var tag = sodium.crypto_auth(v.m, key);
-				var tagHex = to_hex(tag);
-				if (tagHex != v.h) throw new Error('Unexpected HMAC-SHA512/256 value for vector: ' + JSON.stringify(v));
-				var validTag = sodium.crypto_auth_verify(tag, v.m, key);
-				if (!validTag) throw new Error('Cannot verify HMAC-SHA512/256 value for vector: ' + JSON.stringify(v));
-
-				function expandKey(){
-					if (v.k.length < sodium.crypto_auth_KEYBYTES){
-						var newKeyBuffer = new Uint8Array(sodium.crypto_auth_KEYBYTES);
-						var utf8KeyBuffer = sodium.from_string(v.k);
-						for (var i = 0; i < v.k.length; i++) newKeyBuffer[i] = utf8KeyBuffer[i];
-						return newKeyBuffer;
-					} else return v.k;
-				}
-			}
-
-			function testHmacSHA512Vector(v){
-				var key;
-				if (is_hex(v.k)){
-					key = from_hex(v.k);
-				} else {
-					key = expandKey();
-				}
-				var tag = sodium.crypto_auth_hmacsha512(v.m, key);
-				var tagHex = to_hex(tag);
-				if (tagHex != v.h) throw new Error('Unexpected HMAC-SHA512 value for vector: ' + JSON.stringify(v));
-				var validTag = sodium.crypto_auth_hmacsha512_verify(tag, v.m, key);
-				if (!validTag) throw new Error('Cannot verify HMAC-SHA512 value for vector: ' + JSON.stringify(v));
-
-				function expandKey(){
-					if (v.k.length < sodium.crypto_auth_hmacsha512_KEYBYTES){
-						var newKeyBuffer = new Uint8Array(sodium.crypto_auth_hmacsha512_KEYBYTES);
-						var utf8KeyBuffer = sodium.from_string(v.k);
-						for (var i = 0; i < v.k.length; i++) newKeyBuffer[i] = utf8KeyBuffer[i];
-						return newKeyBuffer;
-					} else return v.k;
-				}
-			}
-
-			function testHmacSHA256Vector(v){
-				var key;
-				if (is_hex(v.k)){
-					key = from_hex(v.k);
-				} else {
-					key = expandKey();
-				}
-				var tag = sodium.crypto_auth_hmacsha256(v.m, key);
-				var tagHex = to_hex(tag);
-				if (tagHex != v.h) throw new Error('Unexpected HMAC-SHA256 value for vector: ' + JSON.stringify(v));
-				var validTag = sodium.crypto_auth_hmacsha256_verify(tag, v.m, key);
-				if (!validTag) throw new Error('Cannot verify HMAC-SHA256 value for vector: ' + JSON.stringify(v));
-
-				function expandKey(){
-					if (v.k.length < sodium.crypto_auth_hmacsha256_KEYBYTES){
-						var newKeyBuffer = new Uint8Array(sodium.crypto_auth_hmacsha256_KEYBYTES);
-						var utf8KeyBuffer = sodium.from_string(v.k);
-						for (var i = 0; i < v.k.length; i++) newKeyBuffer[i] = utf8KeyBuffer[i];
-						return newKeyBuffer;
-					} else return v.k;
-				}
-			}
+				testHmacVector(sodium.crypto_auth_hmacsha256, sodium.crypto_auth_hmacsha256_verify,
+						sodium.crypto_auth_hmacsha256_KEYBYTES, hmacSHA256Vectors[i]);
 		};
 
 		return t;
