@@ -348,7 +348,7 @@
 			function testVector(v) {
 				var key = from_hex(v.k);
 				var nonce = from_hex(v.n);
-				var msg = new Uint8Array(v.m.length);
+				var msg = new Uint8Array(v.m.length >> 1);
 
 				var res = sodium.crypto_stream_chacha20_xor_ic(msg, nonce, v.i, key, "hex");
 
