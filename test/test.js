@@ -255,9 +255,14 @@
 				}
 			];
 
-			if (sodium.crypto_auth) for (var i = 0; i < hmacSHA512256Vectors.length; i++) testHmacSHA512256Vector(hmacSHA512256Vectors[i]);
-			if (sodium.crypto_auth_hmacsha512) for (var i = 0; i < hmacSHA512Vectors.length; i++) testHmacSHA512Vector(hmacSHA512Vectors[i]);
-			if (sodium.crypto_auth_hmacsha256) for (var i = 0; i < hmacSHA256Vectors.length; i++) testHmacSHA256Vector(hmacSHA256Vectors[i]);
+			for (var i = 0; i < hmacSHA512256Vectors.length; i++)
+				testHmacSHA512256Vector(hmacSHA512256Vectors[i]);
+
+			for (var i = 0; i < hmacSHA512Vectors.length; i++)
+				testHmacSHA512Vector(hmacSHA512Vectors[i]);
+
+			for (var i = 0; i < hmacSHA256Vectors.length; i++)
+				testHmacSHA256Vector(hmacSHA256Vectors[i]);
 
 			function testHmacSHA512256Vector(v){
 				var key;
