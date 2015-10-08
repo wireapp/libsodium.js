@@ -45,6 +45,7 @@
 			<button onclick="message.innerHTML=testScrypt();">Test scrypt</button>
 			<button onclick="message.innerHTML=testHash();">Test SHA256/512</button>
 			<button onclick="message.innerHTML=testHmac();">Test HMAC</button>
+			<button onclick="message.innerHTML=testChaCha20();">Test ChaCha20</button>
 		</div>
 		<div id="message">
 
@@ -332,7 +333,31 @@
 				}
 
 				return logStr;
+			}
 
+			function testChaCha20() {
+				var sArray = [
+					sodium.crypto_stream_chacha20_xor,
+					sodium.crypto_stream_chacha20_xor_ic,
+					libsodium._crypto_stream_chacha20_noncebytes,
+					libsodium._crypto_stream_chacha20_keybytes
+				];
+
+				if (!checkAvailability(sArray)) {
+					return 'ChaCha20 (or parts of it) is/are missing from the js-compiled libsodium.<br>Please add the missing symbols to the "EXPORTED_FUNCTIONS" array in emscripten.sh, then run `make clean` and `make`';
+				}
+
+				var logStr = '';
+				function log(s) { logStr += s + '<br>'; }
+
+				try {
+					sodium_test.chacha20();
+					log('Test vectors completed successfully.');
+				} catch (e) {
+					log('Test failure: ' + e.message);
+				}
+
+				return logStr;
 			}
 
 			function randBuffer(size){
