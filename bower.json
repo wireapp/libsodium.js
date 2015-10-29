@@ -36,7 +36,6 @@
     "Makefile",
     "README.md",
     "bower_components",
-    "dist/browsers/combined/sodium.js",
     "libsodium",
     "node_modules",
     "package-libsodium.json",
