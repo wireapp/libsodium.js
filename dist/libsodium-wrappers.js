@@ -2765,6 +2765,27 @@
 	exports.to_hex = to_hex;
 	exports.to_string = to_string;
 
+	var sn = function(require) {
+		try {
+			return (typeof require === 'function') && require('sodium-native');
+		} catch (e) {
+			return undefined;
+		}
+	}(require);
+
+	if (sn) {
+		exports.crypto_hash_sha256 = sn.crypto_hash_sha256;
+		exports.crypto_scalarmult = sn.crypto_scalarmult;
+		exports.crypto_auth_hmacsha256 = sn.crypto_auth_hmacsha256;
+		exports.crypto_auth_hmacsha256_verify = sn.crypto_auth_hmacsha256_verify;
+		exports.crypto_sign_keypair = sn.crypto_sign_keypair;
+		exports.crypto_sign_detached = sn.crypto_sign_detached;
+		exports.crypto_sign_verify_detached = sn.crypto_sign_verify_detached;
+		exports.crypto_sign_ed25519_pk_to_curve25519 = sn.crypto_sign_ed25519_pk_to_curve25519;
+		exports.crypto_sign_ed25519_sk_to_curve25519 = sn.crypto_sign_ed25519_sk_to_curve25519;
+		exports.crypto_stream_chacha20_xor = sn.crypto_stream_chacha20_xor;
+		exports.crypto_auth_hmacsha256_KEYBYTES = sn.crypto_auth_hmacsha256_KEYBYTES;
+	} else {
 	
 	var exported_functions = ["crypto_aead_chacha20poly1305_decrypt", "crypto_aead_chacha20poly1305_encrypt", "crypto_aead_chacha20poly1305_ietf_decrypt", "crypto_aead_chacha20poly1305_ietf_encrypt", "crypto_auth", "crypto_auth_hmacsha256", "crypto_auth_hmacsha256_verify", "crypto_auth_hmacsha512", "crypto_auth_hmacsha512_verify", "crypto_auth_verify", "crypto_box_beforenm", "crypto_box_detached", "crypto_box_easy", "crypto_box_easy_afternm", "crypto_box_keypair", "crypto_box_open_detached", "crypto_box_open_easy", "crypto_box_open_easy_afternm", "crypto_box_seal", "crypto_box_seal_open", "crypto_box_seed_keypair", "crypto_generichash", "crypto_generichash_final", "crypto_generichash_init", "crypto_generichash_update", "crypto_hash", "crypto_hash_sha256", "crypto_hash_sha512", "crypto_onetimeauth", "crypto_onetimeauth_final", "crypto_onetimeauth_init", "crypto_onetimeauth_update", "crypto_onetimeauth_verify", "crypto_pwhash_scryptsalsa208sha256", "crypto_pwhash_scryptsalsa208sha256_ll", "crypto_pwhash_scryptsalsa208sha256_str", "crypto_pwhash_scryptsalsa208sha256_str_verify", "crypto_scalarmult", "crypto_scalarmult_base", "crypto_secretbox_detached", "crypto_secretbox_easy", "crypto_secretbox_open_detached", "crypto_secretbox_open_easy", "crypto_shorthash", "crypto_sign", "crypto_sign_detached", "crypto_sign_ed25519_pk_to_curve25519", "crypto_sign_ed25519_sk_to_curve25519", "crypto_sign_ed25519_sk_to_pk", "crypto_sign_ed25519_sk_to_seed", "crypto_sign_keypair", "crypto_sign_open", "crypto_sign_seed_keypair", "crypto_sign_verify_detached", "crypto_stream_chacha20_xor", "crypto_stream_chacha20_xor_ic", "randombytes_buf", "randombytes_close", "randombytes_random", "randombytes_set_implementation", "randombytes_stir", "randombytes_uniform", "sodium_version_string"],
 		functions = [crypto_aead_chacha20poly1305_decrypt, crypto_aead_chacha20poly1305_encrypt, crypto_aead_chacha20poly1305_ietf_decrypt, crypto_aead_chacha20poly1305_ietf_encrypt, crypto_auth, crypto_auth_hmacsha256, crypto_auth_hmacsha256_verify, crypto_auth_hmacsha512, crypto_auth_hmacsha512_verify, crypto_auth_verify, crypto_box_beforenm, crypto_box_detached, crypto_box_easy, crypto_box_easy_afternm, crypto_box_keypair, crypto_box_open_detached, crypto_box_open_easy, crypto_box_open_easy_afternm, crypto_box_seal, crypto_box_seal_open, crypto_box_seed_keypair, crypto_generichash, crypto_generichash_final, crypto_generichash_init, crypto_generichash_update, crypto_hash, crypto_hash_sha256, crypto_hash_sha512, crypto_onetimeauth, crypto_onetimeauth_final, crypto_onetimeauth_init, crypto_onetimeauth_update, crypto_onetimeauth_verify, crypto_pwhash_scryptsalsa208sha256, crypto_pwhash_scryptsalsa208sha256_ll, crypto_pwhash_scryptsalsa208sha256_str, crypto_pwhash_scryptsalsa208sha256_str_verify, crypto_scalarmult, crypto_scalarmult_base, crypto_secretbox_detached, crypto_secretbox_easy, crypto_secretbox_open_detached, crypto_secretbox_open_easy, crypto_shorthash, crypto_sign, crypto_sign_detached, crypto_sign_ed25519_pk_to_curve25519, crypto_sign_ed25519_sk_to_curve25519, crypto_sign_ed25519_sk_to_pk, crypto_sign_ed25519_sk_to_seed, crypto_sign_keypair, crypto_sign_open, crypto_sign_seed_keypair, crypto_sign_verify_detached, crypto_stream_chacha20_xor, crypto_stream_chacha20_xor_ic, randombytes_buf, randombytes_close, randombytes_random, randombytes_set_implementation, randombytes_stir, randombytes_uniform, sodium_version_string];
@@ -2782,6 +2803,8 @@
 	for (var i = 0; i < constants_str.length; i++) {
 		var raw = libsodium["_" + constants_str[i].toLowerCase()];
 		if (typeof raw === "function") exports[constants_str[i]] = libsodium.Pointer_stringify(raw());
+	}
+
 	}
 
 	return exports;

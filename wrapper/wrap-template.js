@@ -286,6 +286,29 @@
 	exports.to_hex = to_hex;
 	exports.to_string = to_string;
 
+	var sn = function(require) {
+		try {
+			return (typeof require === 'function') && require('sodium-native');
+		} catch (e) {
+			return undefined;
+		}
+	}(require);
+
+	if (sn) {
+		exports.crypto_hash_sha256 = sn.crypto_hash_sha256;
+		exports.crypto_scalarmult = sn.crypto_scalarmult;
+		exports.crypto_auth_hmacsha256 = sn.crypto_auth_hmacsha256;
+		exports.crypto_auth_hmacsha256_verify = sn.crypto_auth_hmacsha256_verify;
+		exports.crypto_sign_keypair = sn.crypto_sign_keypair;
+		exports.crypto_sign_detached = sn.crypto_sign_detached;
+		exports.crypto_sign_verify_detached = sn.crypto_sign_verify_detached;
+		exports.crypto_sign_ed25519_pk_to_curve25519 = sn.crypto_sign_ed25519_pk_to_curve25519;
+		exports.crypto_sign_ed25519_sk_to_curve25519 = sn.crypto_sign_ed25519_sk_to_curve25519;
+		exports.crypto_stream_chacha20_xor = sn.crypto_stream_chacha20_xor;
+		exports.crypto_auth_hmacsha256_KEYBYTES = sn.crypto_auth_hmacsha256_KEYBYTES;
+	} else {
 	{{exports_here}}
+	}
+
 	return exports;
 }));
