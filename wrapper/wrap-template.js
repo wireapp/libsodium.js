@@ -286,13 +286,20 @@
 	exports.to_hex = to_hex;
 	exports.to_string = to_string;
 
-	var sn = function(require) {
+	var sn = function() {
+		/* for electron */
+		if ((typeof window) !== 'undefined' && (typeof window.sodium_native !== 'undefined'))
+			return window.sodium_native;
+
+		/* for node */
 		try {
 			return (typeof require === 'function') && require('sodium-native');
 		} catch (e) {
 			return undefined;
 		}
-	}(require);
+
+		return undefined;
+	}();
 
 	if (sn) {
 		exports.crypto_hash_sha256 = sn.crypto_hash_sha256;
