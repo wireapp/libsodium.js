@@ -2772,7 +2772,7 @@
 
 		/* for node */
 		try {
-			return (typeof require === 'function') && require('sodium-native');
+			return (typeof require === 'function') && require('libsodium-native');
 		} catch (e) {
 			return undefined;
 		}
