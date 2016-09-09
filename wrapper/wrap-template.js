@@ -288,7 +288,7 @@
 
 	var sn = function() {
 		/* for electron */
-		if ((typeof window) !== 'undefined' && (typeof window.sodium_native !== 'undefined'))
+		if ((typeof window) !== 'undefined')
 			return window.sodium_native;
 
 		/* for node */
