@@ -1,6 +1,6 @@
 {
   "name": "libsodium",
-  "version": "0.2.10-wire",
+  "version": "wire-0.1.5",
   "description": "The Sodium cryptographic library compiled to pure JavaScript",
   "main": "dist/libsodium-wrappers.js",
   "files": ["dist/libsodium-wrappers.js",
