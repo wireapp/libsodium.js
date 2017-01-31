@@ -6,9 +6,9 @@
 
 	var output_format = "uint8array";
 
-    if (libsodium._sodium_init() !== 0) {
-        throw new Error("libsodium was not correctly initialized.");
-    }
+	if (libsodium._sodium_init() !== 0) {
+		throw new Error("libsodium was not correctly initialized.");
+	}
 
 	// List of functions and constants defined in the wrapped libsodium
 	function symbols() {
